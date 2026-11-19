@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b0b12">
+  <title>Nightwatch | OSINT Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="#"><span class="brand-mark"><i></i><i></i><i></i></span><span>NIGHTWATCH<small>OSINT WORKSPACE</small></span></a>
+      <div class="side-label">WORKSPACE</div>
+      <button class="side-link active" data-view="overview"><span>◈</span> Overview</button>
+      <button class="side-link" data-view="investigate"><span>⌕</span> Investigate</button>
+      <button class="side-link" data-view="sources"><span>◎</span> Source directory</button>
+      <div class="side-label side-label-spaced">YOUR SPACE</div>
+      <button class="side-link" data-view="cases"><span>▤</span> Case files <em>0</em></button>
+      <button class="side-link" data-view="saved"><span>☆</span> Saved items</button>
+      <div class="sidebar-bottom"><div class="status-dot"></div><span>LOCAL DEMO MODE</span><small>v0.1.0</small></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><div class="crumb">WORKSPACE <b>/</b> <span id="crumb-current">OVERVIEW</span></div><div class="top-actions"><span class="privacy-pill"><span></span> PRIVACY FIRST</span><div class="avatar">NW</div></div></header>
+
+      <section class="page active-page" id="overview">
+        <div class="hero">
+          <div class="eyebrow"><span class="eyebrow-line"></span> OPEN-SOURCE INTELLIGENCE</div>
+          <h1>See the <span class="gradient-text">bigger picture.</span></h1>
+          <p class="hero-copy">A focused workspace for organizing public-source research, connecting evidence, and documenting what you find.</p>
+          <button class="primary-btn" id="start-investigation">Start an investigation <span>↗</span></button>
+          <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div><div class="hero-glow"></div>
+          <div class="hero-chip"><span class="pulse"></span> SYSTEM READY <b>·</b> DEMO ENVIRONMENT</div>
+        </div>
+
+        <div class="section-heading"><div><div class="eyebrow">YOUR CONTROL CENTRE</div><h2>Workspace overview</h2></div><span class="muted-tag">ALL SYSTEMS LOCAL</span></div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-icon violet">⌕</div><div class="stat-number">00</div><div class="stat-caption">Investigations</div><div class="stat-foot">Your research starts here</div></article>
+          <article class="stat-card"><div class="stat-icon pink">⌁</div><div class="stat-number">00</div><div class="stat-caption">Evidence items</div><div class="stat-foot">Source-backed observations</div></article>
+          <article class="stat-card"><div class="stat-icon blue">◎</div><div class="stat-number">36</div><div class="stat-caption">Research categories</div><div class="stat-foot">Ready to explore</div></article>
+          <article class="stat-card"><div class="stat-icon orange">⛨</div><div class="stat-number">ON</div><div class="stat-caption">Privacy guardrails</div><div class="stat-foot">No password collection</div></article>
+        </div>
+
+        <div class="section-heading directory-heading"><div><div class="eyebrow">EXPLORE THE TOOLKIT</div><h2>OSINT framework</h2><p class="section-copy">Select a category to reveal what it covers and how it can support a lawful investigation.</p></div><div class="search-mini"><span>⌕</span><input id="category-filter" placeholder="Filter categories..." aria-label="Filter categories"></div></div>
+        <div class="framework-layout">
+          <div class="framework-root"><span class="root-ring">✳</span><div><b>OSINT</b><small>FRAMEWORK</small></div><span class="root-line"></span></div>
+          <div class="category-grid" id="category-grid"></div>
+        </div>
+        <div class="bottom-note"><span>✦</span> Findings should always retain their source, timestamp, and verification status.</div>
+      </section>
+
+      <section class="page" id="investigate">
+        <div class="page-intro"><div class="eyebrow">NEW WORKSPACE</div><h1>Start an <span class="gradient-text">investigation.</span></h1><p>Enter an identifier you own or are authorized to research. This prototype organizes your query locally and does not contact external services.</p></div>
+        <div class="investigation-card">
+          <div class="card-top"><div><span class="card-kicker">01 / IDENTIFIER</span><h2>What are you looking into?</h2></div><span class="live-tag"><i></i> LOCAL ONLY</span></div>
+          <div class="type-tabs" id="type-tabs">
+            <button class="type-tab selected" data-type="Username">Username</button>
+            <button class="type-tab" data-type="Discord ID">Discord ID</button>
+            <button class="type-tab" data-type="Email address">Email</button>
+            <button class="type-tab" data-type="Domain">Domain</button>
+            <button class="type-tab" data-type="IP address">IP address</button>
+          </div>
+          <label class="field-label" for="target-input" id="target-label">USERNAME / HANDLE</label>
+          <div class="input-wrap"><span>⌕</span><input id="target-input" autocomplete="off" placeholder="Enter a username..." maxlength="180"><button id="run-search" class="primary-btn">Prepare search <span>↗</span></button></div>
+          <p class="field-hint">Use only information you own or have a legitimate reason and authorization to examine. Never enter passwords, tokens, or private credentials.</p>
+          <div class="error-message" id="form-error" role="alert"></div>
+        </div>
+        <div class="results-panel" id="results-panel" hidden>
+          <div class="results-header"><div><span class="card-kicker">QUERY WORKSPACE</span><h2 id="result-title">Research plan</h2></div><span class="demo-tag">NO LIVE LOOKUPS</span></div>
+          <p class="results-copy">Your query has been prepared locally. Connect approved public sources to perform actual lookups. No results have been fetched or invented.</p>
+          <div class="plan-list" id="plan-list"></div>
+        </div>
+      </section>
+
+      <section class="page" id="sources">
+        <div class="page-intro"><div class="eyebrow">RESEARCH DIRECTORY</div><h1>Source <span class="gradient-text">directory.</span></h1><p>Browse research areas and plan which public, permitted sources belong in your workflow.</p></div>
+        <div class="source-callout"><span>◎</span><div><b>Connectors are not configured yet.</b><p>This starter site is a front-end prototype. It does not scrape websites or query Discord, search engines, or data brokers.</p></div></div>
+        <div class="source-list" id="source-list"></div>
+      </section>
+
+      <section class="page" id="cases">
+        <div class="page-intro"><div class="eyebrow">YOUR WORK</div><h1>Case <span class="gradient-text">files.</span></h1><p>Investigations created in this prototype stay in this browser session only.</p></div>
+        <div class="empty-state"><div class="empty-symbol">▤</div><h2>No case files yet</h2><p>Start an investigation to create a local research plan.</p><button class="primary-btn" data-go="investigate">Create investigation <span>↗</span></button></div>
+      </section>
+      <section class="page" id="saved">
+        <div class="page-intro"><div class="eyebrow">BOOKMARKS</div><h1>Saved <span class="gradient-text">items.</span></h1><p>Keep useful research categories close at hand.</p></div>
+        <div class="empty-state"><div class="empty-symbol">☆</div><h2>Nothing saved yet</h2><p>Open a category and use its save control to bookmark it.</p></div>
+      </section>
+      <footer><span> NIGHTWATCH <b>·</b> OSINT WORKSPACE</span><span>BUILT FOR RESPONSIBLE RESEARCH</span></footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="info-modal" hidden>
+    <div class="info-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="modal-close" aria-label="Close">×</button><div class="modal-icon" id="modal-icon">◎</div><div class="eyebrow">FRAMEWORK CATEGORY</div><h2 id="modal-title">Category</h2><p id="modal-description"></p><div class="modal-subhead">WHAT THIS AREA CAN COVER</div><ul id="modal-bullets"></ul><div class="modal-foot"><span>✦ Use public, permitted sources only.</span><button id="modal-save" class="secondary-btn">☆ Save category</button></div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
