@@ -55,11 +55,16 @@ function openCategory(i){
  c.slice(2,6).forEach(t=>{const li=document.createElement("li");li.textContent=t;ul.appendChild(li)});
  const save=document.getElementById("modal-save");save.textContent=saved.has(i)?"★ Saved":"☆ Save category";save.classList.toggle("saved",saved.has(i));modal.hidden=false;
 }
+function renderSaved(){
+ const host=document.getElementById("saved-list");if(!host)return;host.innerHTML="";
+ if(!saved.size){const empty=document.createElement("div");empty.className="empty-state";empty.innerHTML='<div class="empty-symbol">☆</div><h2>Nothing saved yet</h2><p>Open a category and use its save control to bookmark it.</p>';host.appendChild(empty);return}
+ [...saved].forEach(i=>{const row=document.createElement("div");row.className="source-row";const mark=document.createElement("span");mark.className="source-mark";mark.textContent="☆";const wrap=document.createElement("div");const name=document.createElement("b");name.textContent=categories[i][0];const desc=document.createElement("small");desc.textContent="Saved research category · click to view details";wrap.append(name,desc);row.append(mark,wrap);row.tabIndex=0;row.setAttribute("role","button");row.addEventListener("click",()=>openCategory(i));host.appendChild(row)});
+}
 function closeModal(){modal.hidden=true}
 document.getElementById("modal-close").addEventListener("click",closeModal);
 modal.addEventListener("click",e=>{if(e.target===modal)closeModal()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
-document.getElementById("modal-save").addEventListener("click",()=>{if(activeCategory===null)return;if(saved.has(activeCategory))saved.delete(activeCategory);else saved.add(activeCategory);const b=document.getElementById("modal-save");b.textContent=saved.has(activeCategory)?"★ Saved":"☆ Save category";b.classList.toggle("saved",saved.has(activeCategory))});
+document.getElementById("modal-save").addEventListener("click",()=>{if(activeCategory===null)return;if(saved.has(activeCategory))saved.delete(activeCategory);else saved.add(activeCategory);const b=document.getElementById("modal-save");b.textContent=saved.has(activeCategory)?"★ Saved":"☆ Save category";b.classList.toggle("saved",saved.has(activeCategory));renderSaved()});
 document.getElementById("category-filter").addEventListener("input",e=>renderCategories(e.target.value));
 const sourceList=document.getElementById("source-list");
 categories.slice(0,18).forEach((c,i)=>{const row=document.createElement("div");row.className="source-row";row.innerHTML='<span class="source-mark">◎</span><div><b></b><small>Suggested research area · connector not configured</small></div>';row.querySelector("b").textContent=c[0];sourceList.appendChild(row)});
