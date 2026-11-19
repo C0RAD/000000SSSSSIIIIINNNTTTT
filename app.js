@@ -81,16 +81,37 @@ function go(view){document.querySelectorAll(".page").forEach(p=>p.classList.togg
 document.querySelectorAll(".side-link").forEach(b=>b.addEventListener("click",()=>go(b.dataset.view)));
 document.getElementById("start-investigation").addEventListener("click",()=>go("investigate"));
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
-document.getElementById("run-search").addEventListener("click",()=>{
+const API_BASE = window.NIGHTWATCH_API_BASE || "http://127.0.0.1:8787";
+const apiStatus=document.getElementById("api-status");
+fetch(API_BASE+"/api/health").then(r=>{if(!r.ok)throw new Error();return r.json()}).then(()=>{apiStatus.textContent="Backend: connected";apiStatus.style.color="#86d9a4"}).catch(()=>{apiStatus.textContent="Backend: offline · start backend/README.md instructions";apiStatus.style.color="#f0a0a9"});
+document.getElementById("run-search").addEventListener("click",async()=>{
  const value=document.getElementById("target-input").value.trim();const error=document.getElementById("form-error");error.textContent="";
- if(!value){error.textContent="Enter an identifier to prepare a research plan.";return}
+ if(!value){error.textContent="Enter an identifier to investigate.";return}
  if(/password|passwd|token|secret/i.test(value)){error.textContent="Do not enter passwords, tokens, or secrets.";return}
- if(selectedType==="Email address"&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)){error.textContent="Enter a valid email address format.";return}
- if(selectedType==="Domain"&&!/^(?=.{1,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i.test(value)){error.textContent="Enter a valid domain name.";return}
- if(selectedType==="IP address"&&!/^(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)$/.test(value)){error.textContent="Enter a valid IPv4 address for this prototype.";return}
- document.getElementById("result-title").textContent=selectedType+" research plan";
- const list=document.getElementById("plan-list");list.innerHTML="";
- (plans[selectedType]||plans.Username).forEach((p,i)=>{const item=document.createElement("div");item.className="plan-item";const b=document.createElement("b");b.textContent=String(i+1).padStart(2,"0")+" / "+p[0];const para=document.createElement("p");para.textContent=p[1];item.append(b,para);list.appendChild(item)});
- document.getElementById("results-panel").hidden=false;document.getElementById("results-panel").scrollIntoView({behavior:"smooth",block:"start"});
+ if(!document.getElementById("authorization-check").checked){error.textContent="Confirm that you own this identifier or have permission to investigate it.";return}
+ const typeMap={"Username":"username","Discord ID":"discordId","Email address":"email","Domain":"domain","IP address":"ip"};
+ const type=typeMap[selectedType];
+ const button=document.getElementById("run-search");button.disabled=true;button.textContent="Checking providers…";
+ const panel=document.getElementById("results-panel");panel.hidden=false;document.getElementById("result-title").textContent="Live provider results";document.getElementById("results-copy");
+ const list=document.getElementById("plan-list");list.innerHTML='<div class="plan-item"><b>Connecting to Nightwatch API…</b><p>Provider responses will appear here with source attribution.</p></div>';
+ try{
+  const response=await fetch(API_BASE+"/api/investigate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({type,value,authorized:true})});
+  const payload=await response.json();if(!response.ok)throw new Error(payload.error||"Request failed.");
+  list.innerHTML="";
+  (payload.results||[]).forEach(item=>{
+   const card=document.createElement("div");card.className="plan-item";
+   const title=document.createElement("b");title.textContent=item.provider;
+   const desc=document.createElement("p");desc.textContent=item.error||item.summary||"Provider result";
+   const stamp=document.createElement("p");stamp.textContent=item.retrievedAt?"Retrieved: "+new Date(item.retrievedAt).toLocaleString():"";
+   card.append(title,desc,stamp);
+   if(item.sourceUrl){const link=document.createElement("a");link.href=item.sourceUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Open source ↗";link.style.cssText="display:inline-block;margin-top:8px;color:#c6a3ff;font-size:10px";card.append(link)}
+   const details=document.createElement("details");details.style.cssText="margin-top:10px;color:#aaa;font-size:10px";
+   const summary=document.createElement("summary");summary.textContent="View returned data";const pre=document.createElement("pre");pre.textContent=JSON.stringify(item.data||{},null,2);pre.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto;color:#c9c4d8;font-size:9px";details.append(summary,pre);card.append(details);list.append(card);
+  });
+  if(!list.children.length){const p=document.createElement("p");p.className="results-copy";p.textContent="No configured provider returned data. Add API keys to backend/.env and try again.";list.append(p)}
+  const note=document.createElement("p");note.className="results-copy";note.textContent=payload.note||"Verify observations at their source.";list.append(note);
+  document.getElementById("results-panel").scrollIntoView({behavior:"smooth",block:"start"});
+ }catch(e){list.innerHTML="";const p=document.createElement("p");p.className="results-copy";p.textContent=e.message.includes("Failed to fetch")?"Cannot reach Nightwatch API. Start the backend and check CORS_ORIGIN.":e.message;list.append(p)}
+ finally{button.disabled=false;button.innerHTML='Prepare search <span>↗</span>'}
 });
 renderCategories();
