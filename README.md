@@ -4,6 +4,10 @@ An OSINT (open-source intelligence) project focused on collecting, correlating, 
 
 ## Project documentation
 
+- [Backend architecture](docs/BACKEND_ARCHITECTURE.md)
+- [Provider setup](docs/PROVIDER_SETUP.md)
+- [Backend API quickstart](backend/README.md)
+
 - [Project overview](docs/PROJECT_OVERVIEW.md)
 - [Development roadmap](docs/ROADMAP.md)
 
@@ -16,4 +20,4 @@ An OSINT (open-source intelligence) project focused on collecting, correlating, 
 
 ## Status
 
-Early planning. The implementation language, framework, storage layer, and deployment model have not yet been selected. See the [roadmap](docs/ROADMAP.md) for proposed next steps.
+The static Nightwatch frontend and an initial Node.js backend integration scaffold are in place. See the [backend setup guide](docs/PROVIDER_SETUP.md) to configure server-side provider credentials. Live provider use requires local backend setup or a separately deployed API.
